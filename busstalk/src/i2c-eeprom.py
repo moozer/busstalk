@@ -51,8 +51,8 @@ if __name__ == "__main__":
     r_val = eeprom.readByte(0x00)
     
     if w_val == r_val:
-       print "Read value corresponds to the written value"%w_val
+       print "Read value corresponds to the written value: 0x%x"%w_val
     else:
-        print "Read/write mismatch: %d vs %d"%(r_val, w_val)
+       print "Read/write mismatch: 0x%x vs 0x%x"%(r_val, w_val)
         
     
