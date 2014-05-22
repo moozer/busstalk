@@ -15,17 +15,18 @@ class bsServer(object):
     classdocs
     '''
 
-    def __init__(self):
+    def __init__(self, port = 10000):
         '''
         Constructor
         '''
         self._ConnectionCount = 0
+        self._tcpPort = port
     
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         
         # Bind the socket to the address given on the command line
-        server_address = ('', 10000)
+        server_address = ('', self._tcpPort)
         self.sock.bind(server_address)
         print >>sys.stderr, 'Starting BS server up on %s port %s' % self.sock.getsockname()
         
@@ -53,6 +54,12 @@ class bsServer(object):
     
     def getConnectionCount(self):
         return self._ConnectionCount
+
+    
+    def getTcpPort(self):
+        return self._tcpPort
+    
+    
     
     
                 
