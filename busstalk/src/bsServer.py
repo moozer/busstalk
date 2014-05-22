@@ -30,6 +30,29 @@ class bsServer(object):
         self.sock.bind(server_address)
         print >>sys.stderr, 'Starting BS server up on %s port %s' % self.sock.getsockname()
         
+        
+    def runOnce(self):
+        ''' the main function to handle incoming data
+        '''
+        self.sock.listen(1)
+        
+        print >>sys.stderr, 'waiting for a connection'
+        connection, client_address = self.sock.accept()
+        self._ConnectionCount += 1
+        try:
+            print >>sys.stderr, 'client connected:', client_address
+            while True:
+                data = connection.recv(16)
+                print >>sys.stderr, 'received "%s"' % data
+                if data:
+                    connection.sendall(data) # just echo stuff
+                else:
+                    return True
+        finally:
+            connection.close()
+            
+        
+        
     def start(self):
         ''' server will sit and wait for connection from client
             and then process it.
@@ -37,21 +60,12 @@ class bsServer(object):
         self.sock.listen(1)
         
         while True:
-            print >>sys.stderr, 'waiting for a connection'
-            connection, client_address = self.sock.accept()
-            try:
-                print >>sys.stderr, 'client connected:', client_address
-                while True:
-                    data = connection.recv(16)
-                    print >>sys.stderr, 'received "%s"' % data
-                    if data:
-                        connection.sendall(data)
-                    else:
-                        break
-            finally:
-                connection.close()
+            if not self.runOnce():
+                break
 
-    
+    # --- 
+    # getters 
+    # ---
     def getConnectionCount(self):
         return self._ConnectionCount
 
@@ -66,6 +80,6 @@ class bsServer(object):
 
 # the program starts from here
 if __name__ == "__main__":
-   srv = bsServer()
-   srv.start()
+    srv = bsServer()
+    srv.start()
                 

@@ -8,6 +8,7 @@ import unittest
 import os
 from bsServer import bsServer
 import threading
+import socket
 parentdir = os.path.dirname(os.path.dirname( '..'))
 os.sys.path.insert(0,parentdir)
 
@@ -31,20 +32,22 @@ class TestClass(unittest.TestCase):
 class TestConnection(unittest.TestCase):
 
     def setUp(self):
-#         s = bsServer()
-#         t = threading.Thread(target=s.runOnce, name="TestServerThread")
-#         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
-#         t.start()
+        self.bss = bsServer()
+        t = threading.Thread(target=self.bss.runOnce, name="TestServerThread")
+        t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
+        t.start()
         pass
 
     def tearDown(self):
         pass
 
     def testConnect(self):
-#         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#         s.connect(('localhost', tcpPort))
-#         s.send( quitMessage )
-#         s.close()
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(('localhost', tcpPort))
+        s.send( quitMessage )
+        s.close()
+        
+        self.assertEqual( self.bss.getConnectionCount(), 1)
         pass
 
 
