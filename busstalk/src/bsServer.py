@@ -51,7 +51,14 @@ class bsServer(object):
         finally:
             connection.close()
             
-        
+    def runMultiple(self, count = 1):
+        ''' handles multiple consecutive connections
+        '''
+        while count > 0:
+            if not self.runOnce():
+                return False
+            
+            count -= 1
         
     def start(self):
         ''' server will sit and wait for connection from client
