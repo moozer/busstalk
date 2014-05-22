@@ -19,6 +19,7 @@ class bsServer(object):
         '''
         Constructor
         '''
+        self._ConnectionCount = 0
     
         # Create a TCP/IP socket
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,6 +49,12 @@ class bsServer(object):
                         break
             finally:
                 connection.close()
+
+    
+    def getConnectionCount(self):
+        return self._ConnectionCount
+    
+    
                 
 
 # the program starts from here
