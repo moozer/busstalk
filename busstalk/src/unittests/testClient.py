@@ -24,7 +24,7 @@ def runMinimalServer( tcpPort, ReturnData = ("WELCOME\n", )  ):
         NB: Remember newlines!
     '''
     
-    print >> sys.stderr, "%s: starting"%(threading.current_thread().name )
+    # print >> sys.stderr, "%s: starting"%(threading.current_thread().name )
         
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -47,20 +47,20 @@ def runMinimalServer( tcpPort, ReturnData = ("WELCOME\n", )  ):
         while True:
             data = connection.recv(16)
             if len(data) < 1:
-                print >> sys.stderr, "%s: zero data"%threading.current_thread().name
+                #print >> sys.stderr, "%s: zero data"%threading.current_thread().name
                 connection.sendall( srvErrorMsg + " zero data received\n")
                 break
-            print >> sys.stderr, "%s: recv: %s"%(threading.current_thread().name, data)
+            #print >> sys.stderr, "%s: recv: %s"%(threading.current_thread().name, data)
             if len(data) < 1 or data[-1] != '\n':
                 continue
             else:
-                print >> sys.stderr, "%s: sending: %s" %(threading.current_thread().name, retval)
+                #print >> sys.stderr, "%s: sending: %s" %(threading.current_thread().name, retval)
                 connection.sendall(retval) # just echo stuff
                 break
             
     connection.shutdown( socket.SHUT_RDWR )
     connection.close()
-    print >> sys.stderr, "%s: done"%threading.current_thread().name
+    #print >> sys.stderr, "%s: done"%threading.current_thread().name
 
 class Test(unittest.TestCase):
 

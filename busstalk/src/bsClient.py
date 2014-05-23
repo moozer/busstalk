@@ -27,9 +27,6 @@ class bsClient(object):
         
         # Connect the socket to the port on the server given by the caller
         self.server_address = (remoteServer, remotePort )
-        
-        print >>sys.stderr, 'Client will connect to %s port %s' % self.server_address
-
         self._sock.connect(self.server_address)
 
         self._send( 'GREETINGS' )
@@ -37,10 +34,11 @@ class bsClient(object):
             raise IOError( 'Unknown response' )
     
     def __enter__(self):
+        ''' function that is called when using 'with' '''
         return self
     
     def __exit__(self, errortype, value, traceback): 
-        print >> sys.stderr, "Closing socket"
+        ''' function that is called when existing 'with' '''
         self._sock.shutdown(socket.SHUT_RDWR)
         while True:
             data = self._sock.recv(16)
