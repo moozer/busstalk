@@ -76,14 +76,9 @@ class bsServer(object):
     def getConnectionCount(self):
         return self._ConnectionCount
 
-    
     def getTcpPort(self):
         return self._tcpPort
-    
-    
-    
-    
-                
+          
 
 # the program starts from here
 if __name__ == "__main__":
