@@ -48,5 +48,5 @@ class bsClient(object):
             
 # the program starts from here
 if __name__ == "__main__":
-   cliennt = bsClient( "localhost" )
+    client = bsClient( "localhost" )
 
