@@ -9,11 +9,12 @@ import os
 from bsServer import bsServer
 import threading
 import socket
+from random import randint
 parentdir = os.path.dirname(os.path.dirname( '..'))
 os.sys.path.insert(0,parentdir)
 
 quitMessage = "QUIT"
-tcpPort = 10000
+tcpPort = randint(10000,11000)
 testCount = 5
 
 class TestClass(unittest.TestCase):

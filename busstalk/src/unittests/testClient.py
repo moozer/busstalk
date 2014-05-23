@@ -7,6 +7,7 @@ import unittest
 
 import os
 import threading
+from random import randint
 parentdir = os.path.dirname(os.path.dirname( '..'))
 os.sys.path.insert(0,parentdir)
 
@@ -14,10 +15,13 @@ import socket, sys
 
 from bsClient import bsClient
 
-tcpPort = 10000
+tcpPort = randint(10000,11000)
 srvHost = 'localhost'
 
-def runMinimalServer():
+def runMinimalServer( ReturnData = ("WELCOME\n", )  ):
+    ''' create a server and return the strings from the array, one line at the time 
+        as response to (un-parsed) received data
+    '''
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
@@ -28,16 +32,20 @@ def runMinimalServer():
     sock.listen(1)
     connection, client_address = sock.accept()  # @UnusedVariable
     
-    try:
+    for retval in ReturnData:
+        # fetch data while available
         while True:
             data = connection.recv(16)
-            print >>sys.stderr, 'received "%s"' % data
-            if data:
-                connection.sendall(data) # just echo stuff
+            print >> sys.stderr, "recv: %s"%data
+            if data[-1] != '\n':
+                continue
             else:
-                return True
-    finally:
-        connection.close()
+                print >> sys.stderr, "sending: %s" %retval
+                connection.sendall(retval) # just echo stuff
+                break
+            
+    connection.close()
+    print >> sys.stderr, "done"
 
 class Test(unittest.TestCase):
 
@@ -61,10 +69,21 @@ class Test(unittest.TestCase):
         t = threading.Thread(target=runMinimalServer, name="TestClientThread" )
         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
         t.start()
-        
-        self.assertRaises( IOError, bsClient, srvHost, tcpPort  )
+         
+        c = bsClient( srvHost, tcpPort  )  # @UnusedVariable
         t.join(3)
-
+         
+     
+#     def testReturnVal(self):
+#         ''' test connecting to localhost
+#         '''        
+#         t = threading.Thread(target=runMinimalServer, name="TestClientThread" )
+#         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
+#         t.start()
+#         
+#         self.assertRaises( IOError, bsClient, srvHost, tcpPort  )
+#         t.join(3)
+#         
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testCreate']
