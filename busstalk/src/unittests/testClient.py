@@ -11,16 +11,18 @@ from random import randint
 parentdir = os.path.dirname(os.path.dirname( '..'))
 os.sys.path.insert(0,parentdir)
 
-import socket, sys
+import socket, sys, time
 
 from bsClient import bsClient
 
 tcpPort = randint(10000,11000)
 srvHost = 'localhost'
+srvErrorMsg = 'ERROR'
 
 def runMinimalServer( ReturnData = ("WELCOME\n", )  ):
     ''' create a server and return the strings from the array, one line at the time 
         as response to (un-parsed) received data
+        NB: Remember newlines!
     '''
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -36,8 +38,12 @@ def runMinimalServer( ReturnData = ("WELCOME\n", )  ):
         # fetch data while available
         while True:
             data = connection.recv(16)
+            if len(data) < 1:
+                print >> sys.stderr, "zero data"
+                connection.sendall( srvErrorMsg + " zero data received\n")
+                break
             print >> sys.stderr, "recv: %s"%data
-            if data[-1] != '\n':
+            if len(data) < 1 or data[-1] != '\n':
                 continue
             else:
                 print >> sys.stderr, "sending: %s" %retval
@@ -69,21 +75,28 @@ class Test(unittest.TestCase):
         t = threading.Thread(target=runMinimalServer, name="TestClientThread" )
         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
         t.start()
+        time.sleep(0.1)
          
         c = bsClient( srvHost, tcpPort  )  # @UnusedVariable
         t.join(3)
          
      
-#     def testReturnVal(self):
+#     def testGetDevices(self):
 #         ''' test connecting to localhost
 #         '''        
-#         t = threading.Thread(target=runMinimalServer, name="TestClientThread" )
+#         t = threading.Thread(target=runMinimalServer, 
+#                              name="TestClientThread", args=(('WELCOME\n', 'OK DEVICES EEPROM LED\n'), ) )
 #         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
 #         t.start()
+#          
+#         c = bsClient( srvHost, tcpPort  )  # @UnusedVariable
+#         devs = c.getDevices()
 #         
-#         self.assertRaises( IOError, bsClient, srvHost, tcpPort  )
+#         self.assertEqual( devs, ['EEPROM', 'LED'])
+# 
+#         
 #         t.join(3)
-#         
+#          
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testCreate']

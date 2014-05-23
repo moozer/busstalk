@@ -5,7 +5,7 @@ Created on May 13, 2014
 '''
 import unittest
 
-import os
+import os, time
 from bsServer import bsServer
 import threading
 import socket
@@ -44,7 +44,8 @@ class TestConnection(unittest.TestCase):
         t = threading.Thread(target=bss.runOnce, name="TestServerThread")
         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
         t.start()
-        
+        time.sleep(0.1)
+
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(('localhost', tcpPort))
         s.send( quitMessage )
@@ -59,6 +60,7 @@ class TestConnection(unittest.TestCase):
         t = threading.Thread(target=bss.runMultiple, name="TestServerThread", args=(testCount,) )
         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
         t.start()
+        time.sleep(0.1)
          
         for i in range(0, testCount ):  
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
