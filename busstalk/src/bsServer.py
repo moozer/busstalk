@@ -88,6 +88,11 @@ class bsServer(object):
     def _sendDevices(self, command):
         self._send("OK %s %s"%(command, ' '.join(self._devices)))
         return True
+
+    def _sendQuit(self, command):
+        self._send("OK BYE")
+        return False
+    
     
     def _parse(self, command):
         self._cmdCount += 1
@@ -97,6 +102,9 @@ class bsServer(object):
         
         if command == "DEVICES": # request device list
             return self._sendDevices( command )
+        
+        if command == "QUIT": # request device list
+            return self._sendQuit( command )
         
         return self._sendUnknownCommand(command)
     

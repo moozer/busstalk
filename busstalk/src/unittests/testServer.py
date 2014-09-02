@@ -99,7 +99,7 @@ class TestServer(unittest.TestCase):
         self.assertEqual( bss.getConnectionCount(), testCount )
         pass
  
-    def testQuit(self):
+    def testDevices(self):
         tcpPort = randint(10000,11000)
         bss = bsServer(port = tcpPort)  
         t = threading.Thread(target=bss.start, name="TestServerThread" )
@@ -137,28 +137,38 @@ class TestServer(unittest.TestCase):
         t.join(3)
         pass
     
+    def sendCommand( self, s, cmd, retval, rcvbuf = 16 ):
+        # doing greeting
+        s.send( cmd)
+        fromSrv = ''
+        while True:
+            data = s.recv(rcvbuf)
+            self.assertTrue(data)
+            fromSrv += data
+            if len(fromSrv) > 1 and fromSrv[-1] == '\n':
+                break
+        self.assertEqual( fromSrv, retval )
         
-# class TestConnection(unittest.TestCase):
-# 
-#     def setUp(self):
-#         self.tcpPort = randint(10000,11000)
-#         bss = bsServer(port = self.tcpPort)  
-#         self.t = threading.Thread(target=bss.start, name="TestServerThread" )
-#         self.t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
-#         self.t.start()
-#         time.sleep(0.1)
-# 
-#     def tearDown(self):
-#         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#         s.connect(('localhost', self.tcpPort))
-#         s.send( firstMessage )
-#         s.close()
-# 
-#     def testQuit(self):
-#         
-#         pass
+    def testQuit(self):
+        tcpPort = randint(10000,11000)
+        bss = bsServer(port = tcpPort)  
+        t = threading.Thread(target=bss.start, name="TestServerThread" )
+        t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
+        t.start()
+        time.sleep(0.1)
+  
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(50)
+        s.connect(('localhost', tcpPort))
+          
+        # doing greeting
+        self.sendCommand( s, "GREETINGS\n", "WELCOME\n")
+        self.sendCommand( s, "QUIT\n", "OK BYE\n")
 
-
+        s.close()
+        t.join(3)
+        pass
+    
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
