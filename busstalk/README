@@ -1,0 +1,28 @@
+Command generalities:
+--------------------
+
+Whenever a command is issued there a two possible answers.
+
+  OK <command> <more values>
+  
+or
+
+  ERROR UNKNOWN COMMAND '<command>'
+  
+  
+
+Command reference:
+------------------
+
+## GREETINGS
+
+  Reply example: WELCOME
+
+  This must be the first command to send. Anything else will result in a closed connection.
+
+## QUIT
+
+  Reply example: OK BYE
+  
+  This disconnects from the server and the servers shuts down.
+  
