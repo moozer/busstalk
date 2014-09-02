@@ -13,7 +13,9 @@ from random import randint
 parentdir = os.path.dirname(os.path.dirname( '..'))
 os.sys.path.insert(0,parentdir)
 
-firstMessage = "GREETINGS\n"
+firstMessage  = "GREETINGS\n"
+firstMessage2 = "GREETINGS\r\n"
+firstReply = "WELCOME\n"
 testCount = 3
 
 class TestServer(unittest.TestCase):
@@ -44,10 +46,33 @@ class TestServer(unittest.TestCase):
         s.settimeout(2)
         s.connect(('localhost', tcpPort))
         s.send( firstMessage )
+        retval = s.recv(50)
         s.close()
          
         t.join(3)
         self.assertEqual( bss.getConnectionCount(), 1)
+        self.assertEqual( retval, firstReply)
+        pass
+  
+    def testConnectWithCarriageReturn(self):
+        ''' test tcp connection '''
+        tcpPort = randint(10000,11000)        
+        bss = bsServer(port = tcpPort)  
+        t = threading.Thread(target=bss.runOnce, name="TestServerThread")
+        t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
+        t.start()
+        time.sleep(0.1)
+ 
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(2)
+        s.connect(('localhost', tcpPort))
+        s.send( firstMessage2 )
+        retval = s.recv( 50)
+        s.close()
+         
+        t.join(3)
+        self.assertEqual( bss.getConnectionCount(), 1)
+        self.assertEqual( retval, firstReply)
         pass
   
     def testMultipleConnect(self):
@@ -59,18 +84,15 @@ class TestServer(unittest.TestCase):
         time.sleep(0.1)
            
         for i in range(0, testCount ):
-            print "start connect %d"%i
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(30)
             s.connect(('localhost', tcpPort))
-            print "sending %s"%firstMessage
             s.send( firstMessage )
             #s.send( "connection %d\n"%i )
             time.sleep(0.1)
             s.shutdown( socket.SHUT_RDWR)
             time.sleep(0.1)
             s.close()
-            print "end %d"%i
           
         t.join(3)
         #t.join()

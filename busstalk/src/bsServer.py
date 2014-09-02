@@ -61,13 +61,13 @@ class bsServer(object):
             else:
                 time.sleep( waittime )
                 timeoutcount -= 1
-                print >> sys.stderr, "(%d) waiting: %d"%(self._tcpPort, timeoutcount)
+                #print >> sys.stderr, "(%d) waiting: %d"%(self._tcpPort, timeoutcount)
                 
             # if timeout
             if timeoutcount < 1:
                 return "TIMEOUT"
             
-        return retval[:-1]
+        return retval.strip()
     
     def _firstContact(self, command):
         expCmd = "GREETINGS"
