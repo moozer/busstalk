@@ -99,43 +99,43 @@ class TestServer(unittest.TestCase):
         self.assertEqual( bss.getConnectionCount(), testCount )
         pass
  
-    def testDevices(self):
-        tcpPort = randint(10000,11000)
-        bss = bsServer(port = tcpPort)  
-        t = threading.Thread(target=bss.start, name="TestServerThread" )
-        t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
-        t.start()
-        time.sleep(0.1)
-  
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(50)
-        s.connect(('localhost', tcpPort))
-          
-        # doing greeting
-        s.send( "GREETINGS\n" )
-        fromSrv = ''
-        while True:
-            data = s.recv(16)
-            self.assertTrue(data)
-            fromSrv += data
-            if len(fromSrv) > 1 and fromSrv[-1] == '\n':
-                break
-        self.assertEqual( fromSrv, 'WELCOME\n')
-  
-        s.send( "DEVICES\n" )        
-        fromSrv = ''
-        while True:
-            data = s.recv(16)
-            self.assertTrue(data)
-            fromSrv += data
-            if len(fromSrv) > 1 and fromSrv[-1] == '\n':
-                break
-        self.assertEqual( fromSrv, 'OK DEVICES EEPROM LED\n')
-          
-        s.close()
-      
-        t.join(3)
-        pass
+#     def testDevices(self):
+#         tcpPort = randint(10000,11000)
+#         bss = bsServer(port = tcpPort)  
+#         t = threading.Thread(target=bss.start, name="TestServerThread" )
+#         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
+#         t.start()
+#         time.sleep(0.1)
+#   
+#         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#         s.settimeout(50)
+#         s.connect(('localhost', tcpPort))
+#           
+#         # doing greeting
+#         s.send( "GREETINGS\n" )
+#         fromSrv = ''
+#         while True:
+#             data = s.recv(16)
+#             self.assertTrue(data)
+#             fromSrv += data
+#             if len(fromSrv) > 1 and fromSrv[-1] == '\n':
+#                 break
+#         self.assertEqual( fromSrv, 'WELCOME\n')
+#   
+#         s.send( "DEVICES\n" )        
+#         fromSrv = ''
+#         while True:
+#             data = s.recv(16)
+#             self.assertTrue(data)
+#             fromSrv += data
+#             if len(fromSrv) > 1 and fromSrv[-1] == '\n':
+#                 break
+#         self.assertEqual( fromSrv, 'OK DEVICES EEPROM LED\n')
+#           
+#         s.close()
+#       
+#         t.join(3)
+#         pass
     
     def sendCommand( self, s, cmd, retval, rcvbuf = 16 ):
         # doing greeting

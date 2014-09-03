@@ -10,17 +10,10 @@ quitCmd = "QUIT"
 quitResponse = (False, "OK BYE")
 greetCmd = "GREETINGS"
 greetResponse = (True, "WELCOME")
+devicesCmd = "DEVICES"
+devicesResponse = (True, "OK DEVICES EEPROM LED")
 
 class Test(unittest.TestCase):
-
-
-    def setUp(self):
-        pass
-
-
-    def tearDown(self):
-        pass
-
 
     def testConstruct(self):
         c = chatMod()
@@ -32,6 +25,14 @@ class Test(unittest.TestCase):
         self.assertEqual( ret, greetResponse )
         ret = c.parse( quitCmd )
         self.assertEqual( ret, quitResponse )
+
+    def testParseDevices(self):
+        c = chatMod()
+        
+        ret = c.parse( greetCmd )
+        self.assertEqual( ret, greetResponse )
+        ret = c.parse( devicesCmd )
+        self.assertEqual( ret, devicesResponse )
 
 
 if __name__ == "__main__":
