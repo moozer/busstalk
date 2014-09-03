@@ -9,6 +9,7 @@ Most of this comes from http://pymotw.com/2/socket/tcp.html
 import socket
 import sys
 import time
+from chatMod import chatMod
 
 
 class bsServer(object):
@@ -16,16 +17,12 @@ class bsServer(object):
     classdocs
     '''
 
-    _devices = ['EEPROM', 'LED']
-
-
     def __init__(self, port = 10000):
         '''
         Constructor
         '''
         self._ConnectionCount = 0
         self._tcpPort = port
-        self._cmdCount = 0
     
         # Create a TCP/IP socket
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -69,45 +66,7 @@ class bsServer(object):
             
         return retval.strip()
     
-    def _firstContact(self, command):
-        expCmd = "GREETINGS"
-        if command != "GREETINGS":
-            print >> sys.stderr, "First contact failed: got '%s' expected '%s'"%(command, expCmd)
-            self._send("ERROR got '%s' expected '%s'"%(command, expCmd))
-            return False
-        
-        self._send('WELCOME')
-        return True
-    
-    def _sendUnknownCommand(self, command):
-        ''' catch-all function to handle misspelling and the like '''
-        print >> sys.stderr, "Unknown command:'%s'"%(command, )
-        self._send("ERROR UNKOWN COMMAND '%s'"%(command, ))
-        return True 
-    
-    def _sendDevices(self, command):
-        self._send("OK %s %s"%(command, ' '.join(self._devices)))
-        return True
 
-    def _sendQuit(self, command):
-        self._send("OK BYE")
-        return False
-    
-    
-    def _parse(self, command):
-        self._cmdCount += 1
-        
-        if self._cmdCount == 1: # first command
-            return self._firstContact( command )
-        
-        if command == "DEVICES": # request device list
-            return self._sendDevices( command )
-        
-        if command == "QUIT": # request device list
-            return self._sendQuit( command )
-        
-        return self._sendUnknownCommand(command)
-    
     
     def runOnce(self ):
         ''' the main function to handle incoming data
@@ -135,6 +94,7 @@ class bsServer(object):
         self._sock.listen(1)
         command = ""
         notQuit = True
+        c = chatMod()
         
         try:
             print >>sys.stderr, '(%d) waiting for a connection'%self._tcpPort
@@ -148,7 +108,8 @@ class bsServer(object):
                 try:
                     command = self._receive()
                     print >> sys.stderr, "command: %s"%command
-                    notQuit = self._parse(command)
+                    notQuit, sendString = c.parse(command)
+                    self._send( sendString)
                     if not notQuit:
                         break                
                 except IOError, e: 
