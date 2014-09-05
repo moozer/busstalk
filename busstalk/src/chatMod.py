@@ -59,8 +59,12 @@ class chatMod(object):
             return True, retString
         
         # auto convert to integer
-        addr = int( setAddr, 0 )
-        val = int( setValue, 0 )
+        try:
+            addr = int( setAddr, 0 )
+            val = int( setValue, 0 )
+        except ValueError, e:
+            retString = "ERROR BAD HEX VALUE '%s'"%e.message.split('\'')[1]
+            return True, retString            
                 
         success = d.setAddress( addr, val )
         
@@ -85,7 +89,12 @@ class chatMod(object):
             return True, retString
         
         # auto convert to integer
-        addr = int( getAddr, 0 )
+        try:
+            addr = int( getAddr, 0 )
+        except ValueError, e:
+            retString = "ERROR BAD HEX VALUE '%s'"%e.message.split('\'')[1]
+            return True, retString
+            
               
         # return None on error"  
         val = d.getAddress( addr )

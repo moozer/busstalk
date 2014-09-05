@@ -112,7 +112,21 @@ class Test(unittest.TestCase):
         self.assertEqual( ret, (True, "ERROR PARAMETERS MISSING GOT %d EXPECTED %d"%(1, 2)) )
         
  
+    def testParseSetGetAddr(self):
+        m = deviceMock(deviceName)
+        c = chatMod( m )
+        
+        ret = c.parse( greetCmd )
+        self.assertEqual( ret, greetResponse )
 
+        m.setReturnOnSet( True )
+        nonHex = "NotAHexValue"
+        ret = c.parse( "SET %s %s 0x2"%(deviceName, nonHex) )
+        self.assertEqual( ret, (True, "ERROR BAD HEX VALUE '%s'"%nonHex) )
+
+        m.setReturnOnGet( getValue )
+        ret = c.parse( "GET %s %s"%(deviceName, nonHex) )
+        self.assertEqual( ret, (True, "ERROR BAD HEX VALUE '%s'"%nonHex) )
 
 
 if __name__ == "__main__":
