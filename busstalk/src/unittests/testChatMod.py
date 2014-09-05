@@ -14,12 +14,18 @@ greetCmd = "GREETINGS"
 greetResponse = (True, "WELCOME")
 devicesCmd = "DEVICES"
 deviceName = "EEPROM"
+
 setValue = randint( 0x00, 0xff ) # random value
 setAddr = randint( 0x00, 0xff ) # random value
 deviceResponse = (True, "OK DEVICES %s"%deviceName)    
 devicesResponse = (True, "OK DEVICES %s MCP"%deviceName)    
 deviceSetCommand = "SET %s 0x%x 0x%x"%(deviceName, setAddr, setValue)
-deviceSetResponse = "OK %s address 0x%x set to 0x%x"%(deviceName, setAddr, setValue)
+deviceSetResponse = "OK %s ADDRESS 0x%x SET TO 0x%x"%(deviceName, setAddr, setValue)
+
+getValue = randint( 0x00, 0xff ) # random value
+getAddr = randint( 0x00, 0xff ) # random value
+deviceGetCommand = "GET %s 0x%x"%(deviceName, getAddr)
+deviceGetResponse = "OK %s ADDRESS 0x%x VALUE 0x%x"%(deviceName, getAddr, getValue)
 
 class Test(unittest.TestCase):
 
@@ -60,6 +66,17 @@ class Test(unittest.TestCase):
         m.setReturnOnSet( True )
         ret = c.parse( deviceSetCommand )
         self.assertEqual( ret, (True, deviceSetResponse) )
+
+    def testParseGet(self):
+        m = deviceMock(deviceName)
+        c = chatMod( m )
+        
+        ret = c.parse( greetCmd )
+        self.assertEqual( ret, greetResponse )
+
+        m.setReturnOnGet( getValue )
+        ret = c.parse( deviceGetCommand )
+        self.assertEqual( ret, (True, deviceGetResponse) )
 
 
 if __name__ == "__main__":

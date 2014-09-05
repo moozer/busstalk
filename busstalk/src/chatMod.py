@@ -45,7 +45,6 @@ class chatMod(object):
         retString = "OK BYE"
         return False, retString
     
-
     def _sendSet(self, paramsToSet):
         deviceName, setAddr, setValue = paramsToSet[:3]
 
@@ -58,9 +57,27 @@ class chatMod(object):
         success = d.setAddress( addr, val )
         
         if success:
-            retString = "OK %s address 0x%x set to 0x%x"%(deviceName, addr, val )
+            retString = "OK %s ADDRESS 0x%x SET TO 0x%x"%(deviceName, addr, val )
         else:
-            retString = "ERROR %s failed to set address 0x%x to 0x%x"%(deviceName, addr, val )
+            retString = "ERROR %s FAILED TO SET ADDRESS 0x%x TO 0x%x"%(deviceName, addr, val )
+            
+        return True, retString
+    
+    def _sendGet(self, paramsToSet):
+        deviceName, getAddr = paramsToSet[:2]
+
+        d = self._getDevice( deviceName )
+        
+        # auto convert to integer
+        addr = int( getAddr, 0 )
+              
+        # return None on error"  
+        val = d.getAddress( addr )
+        
+        if val:
+            retString = "OK %s ADDRESS 0x%x VALUE 0x%x"%(deviceName, addr, val )
+        else:
+            retString = "ERROR %s FAILED TO READ ADDRESS 0x%x"%(deviceName, addr )
             
         return True, retString
     
@@ -90,5 +107,8 @@ class chatMod(object):
         if cmdList[0] == "SET": # request device list
             return self._sendSet( cmdList[1:] )
                 
+        if cmdList[0] == "GET": # request device list
+            return self._sendGet( cmdList[1:] )
+        
         return self._sendUnknownCommand(cmdList[0])
     
