@@ -27,7 +27,6 @@ class i2cDevice(object):
             returns the integer written
         '''
         from random import randint
-        
         SomeData = randint( 0, 0xff )
         
         print >> sys.stderr, "set area 0x%x to 0x%x"%(PtrOffset, SomeData )
@@ -43,7 +42,7 @@ class i2cDevice(object):
         return dataByte
 
     def readByte(self, PtrOffset):
-        ''' return the vallue read '''
+        ''' return the value read '''
         print >> sys.stderr, "read area 0x%x"%(PtrOffset, )
         self.bus.write_byte( self.i2cAddr, PtrOffset )
         val = self.bus.read_byte( self.i2cAddr )
@@ -54,32 +53,36 @@ class i2cDevice(object):
  # the program starts from here
 if __name__ == "__main__":
     # example
-    #write random byte to register
-    eeprom = i2cDevice( BusToUse = 1, i2cAddr = 0x20) # using defaults
-    w_val = eeprom.writeRandom(0x00)
-    time.sleep(0.1)
-    r_val = eeprom.readByte(0x00)
     
-    if w_val == r_val:
-       print "Read value corresponds to the written value: 0x%x"%w_val
-    else:
-       print "Read/write mismatch: 0x%x vs 0x%x"%(r_val, w_val)
-
-
-#     # example for r/w        
-#     eeprom = i2cEeprom( BusToUse = 1, i2cAddr = 0x20 ) # using defaults
-# 
+#     # write random byte to register on an EEPROM chip
+#     eeprom = i2cDevice( BusToUse = 1, i2cAddr = 0x20) 
+#     w_val = eeprom.writeRandom(0x00)
+#     time.sleep(0.1)
 #     r_val = eeprom.readByte(0x00)
-#     print "IO dir byt 0x%X"%r_val
-# 
-#     eeprom.writeByte( 0x00, 0x00 )
-# 
-#     while True:
-#         print "Light on"
-#         eeprom.writeByte( 0x12, 0x01 )
-#         time.sleep( 1.0 )
-#         print "Light off"
-#         eeprom.writeByte( 0x12, 0x00 )
-#         time.sleep( 1.0 )
+#     
+#     if w_val == r_val:
+#        print "Read value corresponds to the written value: 0x%x"%w_val
+#     else:
+#        print "Read/write mismatch: 0x%x vs 0x%x"%(r_val, w_val)
+
+
+    # make an LED blink on an MCP23017
+    # Alternating high and low output on GPIOA0
+    
+    # Init i2c device class
+    mcp = i2cDevice( BusToUse = 1, i2cAddr = 0x20 ) # using defaults
+ 
+    
+    eeprom.writeByte( 0x00, 0x00 ) # set bank A to output on all pins
+    portAddr = 0x14     # GPIO A0
+
+    # and start blinking
+    while True:
+        print "Light on"
+        eeprom.writeByte( portAddr, 0x01 )
+        time.sleep( 1.0 )
+        print "Light off"
+        eeprom.writeByte( portAddr, 0x00 )
+        time.sleep( 1.0 )
 
 
