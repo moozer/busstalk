@@ -45,19 +45,50 @@ class chatMod(object):
         retString = "OK BYE"
         return False, retString
     
+
+    def _sendSet(self, paramsToSet):
+        deviceName, setAddr, setValue = paramsToSet[:3]
+
+        d = self._getDevice( deviceName )
+        
+        # auto convert to integer
+        addr = int( setAddr, 0 )
+        val = int( setValue, 0 )
+                
+        success = d.setAddress( addr, val )
+        
+        if success:
+            retString = "OK %s address 0x%x set to 0x%x"%(deviceName, addr, val )
+        else:
+            retString = "ERROR %s failed to set address 0x%x to 0x%x"%(deviceName, addr, val )
+            
+        return True, retString
+    
+    def _getDevice(self, deviceName ):
+
+        for d in self._devices:
+            if deviceName == d.getName():
+                return d
+        
+        return None
+    
     def parse(self, command):
         ''' command is a oneline string without newline
         '''
         self._cmdCount += 1
+        cmdList = command.split(' ')
         
         if self._cmdCount == 1: # first command
-            return self._firstContact( command )
+            return self._firstContact( cmdList[0] )
         
-        if command == "DEVICES": # request device list
-            return self._sendDevices( command )
+        if cmdList[0] == "DEVICES": # request device list
+            return self._sendDevices( cmdList[0] )
         
-        if command == "QUIT": # request device list
-            return self._sendQuit( command )
+        if cmdList[0] == "QUIT": # request device list
+            return self._sendQuit( cmdList[0] )
         
-        return self._sendUnknownCommand(command)
+        if cmdList[0] == "SET": # request device list
+            return self._sendSet( cmdList[1:] )
+                
+        return self._sendUnknownCommand(cmdList[0])
     

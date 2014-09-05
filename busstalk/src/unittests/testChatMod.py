@@ -6,6 +6,7 @@ Created on Sep 3, 2014
 import unittest
 from chatMod import chatMod
 from unittests.deviceMock import deviceMock
+from random import randint
 
 quitCmd = "QUIT"
 quitResponse = (False, "OK BYE")
@@ -13,8 +14,12 @@ greetCmd = "GREETINGS"
 greetResponse = (True, "WELCOME")
 devicesCmd = "DEVICES"
 deviceName = "EEPROM"
+setValue = randint( 0x00, 0xff ) # random value
+setAddr = randint( 0x00, 0xff ) # random value
 deviceResponse = (True, "OK DEVICES %s"%deviceName)    
 devicesResponse = (True, "OK DEVICES %s MCP"%deviceName)    
+deviceSetCommand = "SET %s 0x%x 0x%x"%(deviceName, setAddr, setValue)
+deviceSetResponse = "OK %s address 0x%x set to 0x%x"%(deviceName, setAddr, setValue)
 
 class Test(unittest.TestCase):
 
@@ -44,6 +49,17 @@ class Test(unittest.TestCase):
         self.assertEqual( ret, greetResponse )
         ret = c.parse( devicesCmd )
         self.assertEqual( ret, devicesResponse )
+
+    def testParseSet(self):
+        m = deviceMock(deviceName)
+        c = chatMod( m )
+        
+        ret = c.parse( greetCmd )
+        self.assertEqual( ret, greetResponse )
+
+        m.setReturnOnSet( True )
+        ret = c.parse( deviceSetCommand )
+        self.assertEqual( ret, (True, deviceSetResponse) )
 
 
 if __name__ == "__main__":
