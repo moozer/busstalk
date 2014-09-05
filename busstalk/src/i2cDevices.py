@@ -37,7 +37,7 @@ class i2cDevice(object):
     def writeByte(self, PtrOffset, dataByte):
         ''' writes a single byte to specified register
         '''
-        print >> sys.stderr, "set area 0x%x to 0x%x"%(PtrOffset, SomeData )
+        print >> sys.stderr, "set area 0x%x to 0x%x"%(PtrOffset, dataByte )
         self.bus.write_byte_data( self.i2cAddr, PtrOffset, dataByte  )
         return dataByte
 
@@ -73,16 +73,16 @@ if __name__ == "__main__":
     mcp = i2cDevice( BusToUse = 1, i2cAddr = 0x20 ) # using defaults
  
     
-    eeprom.writeByte( 0x00, 0x00 ) # set bank A to output on all pins
+    mcp.writeByte( 0x00, 0x00 ) # set bank A to output on all pins
     portAddr = 0x14     # GPIO A0
 
     # and start blinking
     while True:
         print "Light on"
-        eeprom.writeByte( portAddr, 0x01 )
+        mcp.writeByte( portAddr, 0x01 )
         time.sleep( 1.0 )
         print "Light off"
-        eeprom.writeByte( portAddr, 0x00 )
+        mcp.writeByte( portAddr, 0x00 )
         time.sleep( 1.0 )
 
 
