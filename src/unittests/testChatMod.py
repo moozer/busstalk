@@ -20,12 +20,12 @@ setAddr = randint( 0x00, 0xff ) # random value
 deviceResponse = (True, "OK DEVICES %s"%deviceName)    
 devicesResponse = (True, "OK DEVICES %s MCP"%deviceName)    
 deviceSetCommand = "SET %s 0x%x 0x%x"%(deviceName, setAddr, setValue)
-deviceSetResponse = "OK %s ADDRESS 0x%x SET TO 0x%x"%(deviceName, setAddr, setValue)
+deviceSetResponse = "OK SET %s ADDRESS 0x%x TO 0x%x"%(deviceName, setAddr, setValue)
 
 getValue = randint( 0x00, 0xff ) # random value
 getAddr = randint( 0x00, 0xff ) # random value
 deviceGetCommand = "GET %s 0x%x"%(deviceName, getAddr)
-deviceGetResponse = "OK %s ADDRESS 0x%x VALUE 0x%x"%(deviceName, getAddr, getValue)
+deviceGetResponse = "OK GET %s ADDRESS 0x%x VALUE 0x%x"%(deviceName, getAddr, getValue)
 
 class Test(unittest.TestCase):
 

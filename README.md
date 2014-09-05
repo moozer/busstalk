@@ -8,13 +8,11 @@ To test the I2C, first use the i2cdetect
   i2cdetect -y 0
   i2cdetect -y 1
 
-
-  
-
 Some relevant links
 
 * [Basic installation](http://www.raspberry-projects.com/pi/pi-operating-systems/raspbian/io-pins-raspbian/i2c-pins).
 * [Python and I2C](http://www.raspberry-projects.com/pi/programming-in-python/i2c-programming-in-python/using-the-i2c-interface-2)
+
 
 busstalk client/server
 ======================
@@ -58,14 +56,16 @@ Whenever a command is issued there a two possible answers.
   
 or
 
-  ERROR UNKNOWN COMMAND '<command>'
+  ERROR <some meaningful error message>
   
-  This means that the command issued was unknown.
+  This means that the command issued had an error. This could be bad hex values or other input issues
   
   
 
 Command reference:
 ------------------
+
+Yes, capital letters are mandatory
 
 ### GREETINGS
 
@@ -79,3 +79,23 @@ Command reference:
   
   This disconnects from the server and the servers shuts down.
   
+### DEVICES
+
+  Reply example: OK DEVICES MCF EEPROM
+  
+  The command queries the server and asks for the list of connected devices.
+  
+### SET <device> <addr> <value>
+
+   Reply example: OK SET MCF ADDRESS 0x14 TO 0x01
+   
+   Send a data byte to the device and set the data at specified address
+   
+ 
+### GET <device> <addr>
+
+   Reply example: OK GET MCF ADDRESS 0xf2 VALUE 0x00 
+   
+   Read from the device and return the value at the given address   
+ 
+
