@@ -49,6 +49,9 @@ class chatMod(object):
         deviceName, setAddr, setValue = paramsToSet[:3]
 
         d = self._getDevice( deviceName )
+        if not d:
+            retString = "ERROR BAD DEVICE '%s'"%deviceName
+            return True, retString
         
         # auto convert to integer
         addr = int( setAddr, 0 )
@@ -67,6 +70,9 @@ class chatMod(object):
         deviceName, getAddr = paramsToSet[:2]
 
         d = self._getDevice( deviceName )
+        if not d:
+            retString = "ERROR BAD DEVICE '%s'"%deviceName
+            return True, retString
         
         # auto convert to integer
         addr = int( getAddr, 0 )

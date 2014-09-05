@@ -78,6 +78,28 @@ class Test(unittest.TestCase):
         ret = c.parse( deviceGetCommand )
         self.assertEqual( ret, (True, deviceGetResponse) )
 
+    def testParseSetBadDevice(self):
+        m = deviceMock(deviceName+'XX')
+        c = chatMod( m )
+        
+        ret = c.parse( greetCmd )
+        self.assertEqual( ret, greetResponse )
+
+        m.setReturnOnSet( True )
+        ret = c.parse( deviceSetCommand )
+        self.assertEqual( ret, (True, "ERROR BAD DEVICE 'EEPROM'") )
+
+    def testParseGetBadDevice(self):
+        m = deviceMock(deviceName+'XX')
+        c = chatMod( m )
+         
+        ret = c.parse( greetCmd )
+        self.assertEqual( ret, greetResponse )
+ 
+        m.setReturnOnGet( getValue )
+        ret = c.parse( deviceGetCommand )
+        self.assertEqual( ret, (True, "ERROR BAD DEVICE 'EEPROM'") )
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testConstruct']
