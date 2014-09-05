@@ -10,8 +10,10 @@ from bsServer import bsServer
 import threading
 import socket
 from random import randint
+from unittests.deviceMock import deviceMock
 parentdir = os.path.dirname(os.path.dirname( '..'))
 os.sys.path.insert(0,parentdir)
+device = deviceMock("EEPROM")
 
 firstMessage  = "GREETINGS\n"
 firstMessage2 = "GREETINGS\r\n"
@@ -29,14 +31,14 @@ class TestServer(unittest.TestCase):
     def testCreate(self):
         ''' test simple class instatiation '''
         tcpPort = randint(10000,11000)
-        s = bsServer( port = tcpPort)  
+        s = bsServer( deviceList = device, port = tcpPort)  
         self.assertEqual( s.getConnectionCount(), 0 )
         self.assertEqual( s.getTcpPort(), tcpPort)
         
     def testConnect(self):
         ''' test tcp connection '''
         tcpPort = randint(10000,11000)        
-        bss = bsServer(port = tcpPort)  
+        bss = bsServer( deviceList = device, port = tcpPort)  
         t = threading.Thread(target=bss.runOnce, name="TestServerThread")
         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
         t.start()
@@ -57,7 +59,7 @@ class TestServer(unittest.TestCase):
     def testConnectWithCarriageReturn(self):
         ''' test tcp connection '''
         tcpPort = randint(10000,11000)        
-        bss = bsServer(port = tcpPort)  
+        bss = bsServer( deviceList = device, port = tcpPort)  
         t = threading.Thread(target=bss.runOnce, name="TestServerThread")
         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
         t.start()
@@ -77,7 +79,7 @@ class TestServer(unittest.TestCase):
   
     def testMultipleConnect(self):
         tcpPort = randint(10000,11000)
-        bss = bsServer(port = tcpPort)  
+        bss = bsServer( deviceList = device, port = tcpPort)  
         t = threading.Thread(target=bss.runMultiple, name="TestServerThread", args=(testCount,) )
         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
         t.start()
@@ -98,44 +100,6 @@ class TestServer(unittest.TestCase):
         #t.join()
         self.assertEqual( bss.getConnectionCount(), testCount )
         pass
- 
-#     def testDevices(self):
-#         tcpPort = randint(10000,11000)
-#         bss = bsServer(port = tcpPort)  
-#         t = threading.Thread(target=bss.start, name="TestServerThread" )
-#         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
-#         t.start()
-#         time.sleep(0.1)
-#   
-#         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#         s.settimeout(50)
-#         s.connect(('localhost', tcpPort))
-#           
-#         # doing greeting
-#         s.send( "GREETINGS\n" )
-#         fromSrv = ''
-#         while True:
-#             data = s.recv(16)
-#             self.assertTrue(data)
-#             fromSrv += data
-#             if len(fromSrv) > 1 and fromSrv[-1] == '\n':
-#                 break
-#         self.assertEqual( fromSrv, 'WELCOME\n')
-#   
-#         s.send( "DEVICES\n" )        
-#         fromSrv = ''
-#         while True:
-#             data = s.recv(16)
-#             self.assertTrue(data)
-#             fromSrv += data
-#             if len(fromSrv) > 1 and fromSrv[-1] == '\n':
-#                 break
-#         self.assertEqual( fromSrv, 'OK DEVICES EEPROM LED\n')
-#           
-#         s.close()
-#       
-#         t.join(3)
-#         pass
     
     def sendCommand( self, s, cmd, retval, rcvbuf = 16 ):
         # doing greeting
@@ -151,7 +115,7 @@ class TestServer(unittest.TestCase):
         
     def testQuit(self):
         tcpPort = randint(10000,11000)
-        bss = bsServer(port = tcpPort)  
+        bss = bsServer( deviceList = device, port = tcpPort)  
         t = threading.Thread(target=bss.start, name="TestServerThread" )
         t.daemon = False  # thread dies when main thread (only non-daemon thread) exits.
         t.start()

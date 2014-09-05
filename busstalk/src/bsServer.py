@@ -17,12 +17,13 @@ class bsServer(object):
     classdocs
     '''
 
-    def __init__(self, port = 10000):
+    def __init__(self, deviceList, port = 10000):
         '''
         Constructor
         '''
         self._ConnectionCount = 0
         self._tcpPort = port
+        self._deviceList = deviceList
     
         # Create a TCP/IP socket
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -94,7 +95,7 @@ class bsServer(object):
         self._sock.listen(1)
         command = ""
         notQuit = True
-        c = chatMod()
+        c = chatMod( self._deviceList )
         
         try:
             print >>sys.stderr, '(%d) waiting for a connection'%self._tcpPort
