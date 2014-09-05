@@ -11,14 +11,15 @@ class chatMod(object):
     classdocs
     '''
 
-    _devices = ['EEPROM', 'LED']
-
-
-    def __init__(self):
+    def __init__(self, deviceList):
         '''
         Constructor
         '''
         self._cmdCount = 0
+        if type( deviceList ) == type( [] ):
+            self._devices = deviceList
+        else:
+            self._devices = [deviceList]            
         
     def _firstContact(self, command):
         expCmd = "GREETINGS"
@@ -37,7 +38,7 @@ class chatMod(object):
         return True, retString
     
     def _sendDevices(self, command):
-        retString = "OK %s %s"%(command, ' '.join(self._devices))
+        retString = "OK %s %s"%(command, ' '.join( d.getName() for d in self._devices ))
         return True, retString
 
     def _sendQuit(self, command):
