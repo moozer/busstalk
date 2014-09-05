@@ -46,6 +46,11 @@ class chatMod(object):
         return False, retString
     
     def _sendSet(self, paramsToSet):
+        paramsNeeded = 3
+        if len(paramsToSet) < paramsNeeded:
+            retString = "ERROR PARAMETERS MISSING GOT %d EXPECTED %d"%(len(paramsToSet), paramsNeeded)
+            return True, retString
+            
         deviceName, setAddr, setValue = paramsToSet[:3]
 
         d = self._getDevice( deviceName )
@@ -67,6 +72,11 @@ class chatMod(object):
         return True, retString
     
     def _sendGet(self, paramsToSet):
+        paramsNeeded = 2
+        if len(paramsToSet) < paramsNeeded:
+            retString = "ERROR PARAMETERS MISSING GOT %d EXPECTED %d"%(len(paramsToSet), paramsNeeded)
+            return True, retString        
+        
         deviceName, getAddr = paramsToSet[:2]
 
         d = self._getDevice( deviceName )

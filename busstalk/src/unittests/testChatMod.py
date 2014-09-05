@@ -78,7 +78,7 @@ class Test(unittest.TestCase):
         ret = c.parse( deviceGetCommand )
         self.assertEqual( ret, (True, deviceGetResponse) )
 
-    def testParseSetBadDevice(self):
+    def testParseSetGetBadDevice(self):
         m = deviceMock(deviceName+'XX')
         c = chatMod( m )
         
@@ -89,16 +89,30 @@ class Test(unittest.TestCase):
         ret = c.parse( deviceSetCommand )
         self.assertEqual( ret, (True, "ERROR BAD DEVICE 'EEPROM'") )
 
-    def testParseGetBadDevice(self):
-        m = deviceMock(deviceName+'XX')
-        c = chatMod( m )
-         
-        ret = c.parse( greetCmd )
-        self.assertEqual( ret, greetResponse )
- 
         m.setReturnOnGet( getValue )
         ret = c.parse( deviceGetCommand )
         self.assertEqual( ret, (True, "ERROR BAD DEVICE 'EEPROM'") )
+        
+    def testParseSetGetMissingParam(self):
+        m = deviceMock(deviceName)
+        c = chatMod( m )
+        
+        ret = c.parse( greetCmd )
+        self.assertEqual( ret, greetResponse )
+
+        m.setReturnOnSet( True )
+        ret = c.parse( "SET %s"%deviceName )
+        self.assertEqual( ret, (True, "ERROR PARAMETERS MISSING GOT %d EXPECTED %d"%(1, 3)) )
+
+        ret = c.parse( "SET %s 0x23"%deviceName )
+        self.assertEqual( ret, (True, "ERROR PARAMETERS MISSING GOT %d EXPECTED %d"%(2, 3)) )
+
+        m.setReturnOnGet( getValue )
+        ret = c.parse( "GET %s"%deviceName )
+        self.assertEqual( ret, (True, "ERROR PARAMETERS MISSING GOT %d EXPECTED %d"%(1, 2)) )
+        
+ 
+
 
 
 if __name__ == "__main__":
