@@ -36,7 +36,7 @@ Using the program:
 
 On the raspberry pi, start the program using
 
-    sudo ./startScript.sh
+    sudo ./startServer.sh
 
 `sudo` is needed since talking on the I2C bus is restricted. Alternatively, the user can be put in the `i2c` group.
   
