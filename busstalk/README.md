@@ -38,7 +38,7 @@ Using the program:
 
 On the raspberry pi, start the program using
 
-  ./startScript.sh
+  ./startServer.sh
   
 On the client, start a terminal and run
 
