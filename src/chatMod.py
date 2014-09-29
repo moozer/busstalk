@@ -69,7 +69,7 @@ class chatMod(object):
         success = d.setAddress( addr, val )
         
         if success:
-            retString = "OK %s ADDRESS 0x%x SET TO 0x%x"%(deviceName, addr, val )
+            retString = "OK SET %s ADDRESS 0x%x TO 0x%x"%(deviceName, addr, val )
         else:
             retString = "ERROR %s FAILED TO SET ADDRESS 0x%x TO 0x%x"%(deviceName, addr, val )
             
@@ -100,7 +100,7 @@ class chatMod(object):
         val = d.getAddress( addr )
         
         if val:
-            retString = "OK %s ADDRESS 0x%x VALUE 0x%x"%(deviceName, addr, val )
+            retString = "OK GET %s ADDRESS 0x%x VALUE 0x%x"%(deviceName, addr, val )
         else:
             retString = "ERROR %s FAILED TO READ ADDRESS 0x%x"%(deviceName, addr )
             
